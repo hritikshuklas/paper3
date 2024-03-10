@@ -9,9 +9,11 @@
 
 #### Workspace setup ####
 library(tidyverse)
+library(dplyr)
+library(janitor)
 
 #### Clean data ####
-raw_data <- read_csv("inputs/data/plane_data.csv")
+raw_data <- read_csv("data/raw_data/ces2020.csv")
 
 cleaned_data <-
   raw_data |>

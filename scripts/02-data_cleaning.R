@@ -10,37 +10,34 @@
 #### Workspace setup ####
 library(tidyverse)
 library(dplyr)
-library(janitor)
+library(arrow)
+library(tidyr)
 
 #### Clean data ####
 raw_data <- read_csv("data/raw_data/ces2020.csv")
 
 cleaned_data <-
   raw_data |>
-  janitor::clean_names() |>
-  select(wing_width_mm, wing_length_mm, flying_time_sec_first_timer) |>
-  filter(wing_width_mm != "caw") |>
-  mutate(
-    flying_time_sec_first_timer = if_else(flying_time_sec_first_timer == "1,35",
-                                   "1.35",
-                                   flying_time_sec_first_timer)
+  filter(votereg == 1) |>
+  filter(CC20_410 == 1 | CC20_410 == 2) |>
+  rename(birthyear = birthyr,
   ) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "490",
-                                 "49",
-                                 wing_width_mm)) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "6",
-                                 "60",
-                                 wing_width_mm)) |>
   mutate(
-    wing_width_mm = as.numeric(wing_width_mm),
-    wing_length_mm = as.numeric(wing_length_mm),
-    flying_time_sec_first_timer = as.numeric(flying_time_sec_first_timer)
+    voted_for = if_else(CC20_410 == 1, "Biden", "Trump"),
+    generation = case_when(
+      between(birthyear, 1928, 1945) ~ "Silent Generation",
+      between(birthyear, 1946, 1964) ~ "Baby Boomer",
+      between(birthyear, 1965, 1980) ~ "Generation X",
+      between(birthyear, 1981, 1996) ~ "Millennial",
+      between(birthyear, 1997, 2012) ~ "Generation Z"
+    ),
+    gender = if_else(gender == 1, "Male", "Female")
   ) |>
-  rename(flying_time = flying_time_sec_first_timer,
-         width = wing_width_mm,
-         length = wing_length_mm
-         ) |> 
-  tidyr::drop_na()
+  select(-votereg, -CC20_410) |>
+  drop_na()
+
+
 
 #### Save data ####
-write_csv(cleaned_data, "outputs/data/analysis_data.csv")
+write_csv(cleaned_data, "data/analysis_data/cleaned_data.csv")
+write_parquet(cleaned_data, "data/analysis_data/cleaned_data.parquet")

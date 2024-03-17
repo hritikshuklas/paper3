@@ -12,7 +12,6 @@ set.seed(853)
 num_obs <- 1000
 
 #### Simulate data ####
-
 us_political_preferences <- tibble(
   generation = sample(0:4, size = num_obs, replace = TRUE),
   gender = sample(0:1, size = num_obs, replace = TRUE),

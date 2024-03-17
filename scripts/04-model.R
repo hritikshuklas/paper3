@@ -1,31 +1,32 @@
 #### Preamble ####
-# Purpose: Models... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Models voter preference as an outcome of generation and gender
+# Author: Hritik Shukla
+# Date: 12 March 2024 
+# Contact: hritik.shukla@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
-
 
 #### Workspace setup ####
 library(tidyverse)
 library(rstanarm)
 library(arrow)
+library(modelsummary)
 
 #### Read data ####
 analysis_data <- read_parquet("data/analysis_data/cleaned_data.parquet")
 
 set.seed(853)
-### Model data ####
 
+### Convert Variables to Factors ####
 analysis_data <- analysis_data |>
   mutate(
     voted_for = factor(
       voted_for,
       levels = c("Biden", "Trump")
     ),
-    gender = as_factor(gender),
+    gender = factor(
+      gender,
+      levels = c("Female", "Male")
+    ),
     generation = factor(
       generation,
       levels = c(
@@ -37,6 +38,8 @@ analysis_data <- analysis_data |>
       )
     )
   )
+
+### Model Data ####
 generation_gender_model <-
   stan_glm(
     formula = voted_for ~ generation + gender,
@@ -54,5 +57,4 @@ saveRDS(
   generation_gender_model,
   file = "models/generation_gender_model.rds"
 )
-
 

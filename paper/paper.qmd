@@ -308,13 +308,7 @@ Define:
 -   $\mbox{generation}_i$ is the generation of the respondent
 
 ```{=tex}
-\begin{align} 
-y_i|\pi_i &\sim \mbox{Bern}(\pi_i) \\
-\mbox{logit}(\pi_i) &= \beta_0 + \beta_1 \times \mbox{gender}_i +  \beta_2 \times \mbox{generation}_i\\
-\beta_0 &\sim \mbox{Normal}(0, 2.5) \\
-\beta_1 &\sim \mbox{Normal}(0, 2.5) \\
-\beta_2 &\sim \mbox{Normal}(0, 2.5)
-\end{align}
+\begin{align}  y_i|\pi_i &\sim \mbox{Bern}(\pi_i) \\ \mbox{logit}(\pi_i) &= \beta_0 + \beta_1 \times \mbox{gender}_i +  \beta_2 \times \mbox{generation}_i\\ \beta_0 &\sim \mbox{Normal}(0, 2.5) \\ \beta_1 &\sim \mbox{Normal}(0, 2.5) \\ \beta_2 &\sim \mbox{Normal}(0, 2.5) \end{align}
 ```
 We run the model in R [@citeR] using the `rstanarm` package of
 @rstanarm. We use the default priors from `rstanarm`.
@@ -391,25 +385,21 @@ in their voting preferences in the favour of Biden. This falls in line
 with the recent trends of women voting more liberal in the recent years.
 
 Note that these observations are further supported by the coefficients
-of our fitted logistic model, as seen in @fig-model-summary:
+of our fitted logistic model, as seen in @tbl-model-summary:
 
 ```{r}
-#| label: fig-model-summary
-#| fig-cap: Model Summary
+#| label: tbl-model-summary
+#| tbl-cap: Model Summary
 #| echo: false
 #| warning: false
 
-
-model_summary_tbl <- modelsummary(
+modelsummary(
   list(
     "Support Biden" = model
   ),
-  type="latex",
-  condense = FALSE,
   statistic = "mad"
 )
 
-model_summary_tbl
 ```
 
 Note that for our model, we set Biden as our reference level for
@@ -428,22 +418,8 @@ Our model arrived at the intercept of 0.051 with a standard error of
 0.035. This means that we can say with fairly high accuracy, that when
 all predictors are set to 0, i.e, for the female demographic of the
 Silent Generation, Trump's log odds for getting a vote is 0.051, which
-is about 51% as seen in @code-log-odd-intercept, which falls in line
-with our observations in @fig-pres-pref-gender-generation.
-
-```{r, caption="Calculating probability from the intercept log odds"}
-#| label: code-log-odd-intercept
-#| warning: false
-
-# Given log odds
-log_odds <- 0.051
-
-# Calculate probability using the logistic function
-probability <- 1 / (1 + exp(-log_odds))
-
-# Print the probability
-print(probability)
-```
+is about 51% probability - this falls in line with our observations in
+@fig-pres-pref-gender-generation.
 
 Keeping our reference level of Silent Generation and Biden in mind, we
 now observe the coefficients for different generations:
@@ -573,7 +549,7 @@ with the prior.
 #| warning: false 
 #| label: fig-ppcheckandposteriorvsprior 
 #| layout-ncol: 2 
-#| fig-cap: "Examining how the model fits, and is affected by, the data" 
+#| fig-cap: Examining how the model fits, and is affected by, the data 
 #| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
 
 pp_check(model) + 
@@ -591,7 +567,7 @@ posterior_vs_prior(model) +
 
 ```{r}
 #| label: fig-model-cred-interval 
-#| fig-cap: "Credible Intervals"
+#| fig-cap: Credible Intervals
 #| echo: false 
 #| warning: false
 
